@@ -1,0 +1,54 @@
+---
+layout: base.njk
+title: Power Rankings
+subtitle: Points per game, all-play record and recent form. Who's good, who's bad, who's lucky.
+---
+<div class="cards">
+{% for c in roast.categories.power %}
+  <div class="card"><h3>{{ c.title }}</h3><p>{{ c.text }}</p></div>
+{% endfor %}
+</div>
+
+<h2>The rankings</h2>
+<div class="tablewrap"><table>
+  <thead><tr>
+    <th class="num">#</th><th></th><th>Team</th><th class="num">Record</th><th class="num">All-play</th>
+    <th class="num">PPG</th><th class="num">Last 3</th><th>Power</th>
+  </tr></thead>
+  <tbody>
+  {% for t in power.rankings %}
+    <tr>
+      <td class="num">{{ t.rank }}</td>
+      <td class="num {% if t.movement > 0 %}up{% elif t.movement < 0 %}down{% endif %}">{% if t.movement > 0 %}▲{{ t.movement }}{% elif t.movement < 0 %}▼{{ t.movement | abs }}{% else %}–{% endif %}</td>
+      <td><span class="team">{{ t.team }}</span><br><span class="owner">{{ t.owner }} · {{ t.division }}</span></td>
+      <td class="num">{{ t.record }}</td>
+      <td class="num">{{ t.allPlay }}</td>
+      <td class="num">{{ t.ppg | fixed }}</td>
+      <td class="num {% if t.formDelta >= 10 %}up{% elif t.formDelta <= -10 %}down{% endif %}">{{ t.form | fixed }}</td>
+      <td><span class="bar" style="width:{{ t.power * 0.8 }}px"></span>{{ t.power | fixed }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+<p class="note">Power = {{ (power.weights.pf * 100) | round }}% points per game + {{ (power.weights.allPlay * 100) | round }}% all-play win% + {{ (power.weights.form * 100) | round }}% average of the last {{ power.recentWeeks }} weeks, each scaled 0–100 across the league. All-play is your record if you played all 15 other teams every week.</p>
+
+<h2>Luck check</h2>
+<div class="cards">
+{% for c in roast.categories.luck %}
+  <div class="card"><h3>{{ c.title }}</h3><p>{{ c.text }}</p></div>
+{% endfor %}
+</div>
+<div class="tablewrap" style="margin-top:12px"><table>
+  <thead><tr><th>Team</th><th class="num">Actual wins</th><th class="num">All-play wins</th><th class="num">Luck</th></tr></thead>
+  <tbody>
+  {% for t in power.rankings | sort(false, false, 'luck') | reverse %}
+    <tr>
+      <td class="team">{{ t.team }}</td>
+      <td class="num">{{ t.wins }}{% if t.ties %}.{{ t.ties * 5 }}{% endif %}</td>
+      <td class="num">{{ t.expectedWins | fixed }}</td>
+      <td class="num {% if t.luck > 0.5 %}up{% elif t.luck < -0.5 %}down{% endif %}">{{ t.luck | signed }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+<p class="note">All-play wins = expected wins if every week were played against the whole league. Positive luck means the schedule has been kind.</p>

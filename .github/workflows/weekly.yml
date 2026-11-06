@@ -1,0 +1,54 @@
+name: Weekly roast rebuild
+
+on:
+  schedule:
+    # Tuesday 12:00 UTC (7am ET in winter, 8am in summer): Monday Night Football is final and stat corrections have mostly landed.
+    - cron: '0 12 * * 2'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Keeps completed weeks and the 24h players file between runs so we barely touch the API.
+      - uses: actions/cache@v4
+        with:
+          path: cache
+          key: sleeper-cache-${{ github.run_id }}
+          restore-keys: sleeper-cache-
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          PATH_PREFIX: /${{ github.event.repository.name }}/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

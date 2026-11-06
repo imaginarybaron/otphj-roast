@@ -1,0 +1,59 @@
+---
+layout: base.njk
+title: Waiver Wire
+subtitle: Best pickups, worst whiffs, and who's burning FAAB the fastest.
+---
+<div class="cards">
+{% for c in roast.categories.waivers %}
+  <div class="card"><h3>{{ c.title }}</h3><p>{{ c.text }}</p></div>
+{% endfor %}
+</div>
+
+{% macro pickups(list, valueLabel) %}
+<div class="tablewrap"><table>
+  <thead><tr><th>Player</th><th>Team</th><th class="num">Wk</th><th class="num">Bid</th><th class="num">Started pts</th><th class="num">Pts / $</th><th class="num">Wks held</th></tr></thead>
+  <tbody>
+  {% for a in list %}
+    <tr>
+      <td><span class="team">{{ a.player }}</span> <span class="owner">{{ a.pos }}, {{ a.nfl }}</span></td>
+      <td>{{ a.team }}</td>
+      <td class="num">{{ a.week }}</td>
+      <td class="num">{% if a.bid %}${{ a.bid }}{% else %}free{% endif %}</td>
+      <td class="num">{{ a.startedPts | fixed }}</td>
+      <td class="num">{{ a.ptsPerDollar | fixed(2) }}</td>
+      <td class="num">{{ a.weeksHeld }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endmacro %}
+
+<h2>Best pickups (most points)</h2>
+{{ pickups(waivers.bestPickups) }}
+
+<h2>Best value (points per dollar)</h2>
+{{ pickups(waivers.bestValue) }}
+
+<h2>Worst whiffs</h2>
+{{ pickups(waivers.worstWhiffs) }}
+<p class="note">Whiffs are the lowest points-per-dollar among bids of $5 or more.</p>
+
+<h2>Team FAAB report</h2>
+<div class="tablewrap"><table>
+  <thead><tr><th>Team</th><th class="num">Claims won</th><th class="num">Spent</th><th class="num">Left</th><th class="num">Paid pts</th><th class="num">Pts / $</th><th class="num">Failed claims</th><th class="num">Free-agent pts</th></tr></thead>
+  <tbody>
+  {% for t in waivers.teams %}
+    <tr>
+      <td class="team">{{ t.team }}</td>
+      <td class="num">{{ t.claims }}</td>
+      <td class="num">${{ t.spent }}</td>
+      <td class="num">${{ t.budgetLeft }}</td>
+      <td class="num">{{ t.paidPts | fixed }}</td>
+      <td class="num">{{ t.ptsPerDollar | fixed(2) }}</td>
+      <td class="num">{{ t.failedClaims }}</td>
+      <td class="num">{{ t.freeAgentPts | fixed }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+<p class="note"><strong>Started pts</strong> = points the player scored in the adding team's starting lineup after the add, for as long as they stayed on that roster. Pts / $ only counts paid waiver claims. Points scored after a player is dropped aren't visible in Sleeper's data, and players added and cut within the same week show 0.</p>

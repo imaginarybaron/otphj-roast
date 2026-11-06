@@ -1,0 +1,39 @@
+---
+layout: base.njk
+title: Rest-of-Season Schedule
+subtitle: Easiest to toughest, based on how strong your remaining opponents are.
+---
+<div class="cards">
+{% for c in roast.categories.schedule %}
+  <div class="card"><h3>{{ c.title }}</h3><p>{{ c.text }}</p></div>
+{% endfor %}
+</div>
+
+<h2>Easiest to toughest</h2>
+<div class="tablewrap"><table>
+  <thead><tr><th class="num">#</th><th>Team</th><th class="num">Games left</th><th class="num">Avg opp power</th><th class="num">Avg opp PPG</th><th>Toughest game</th><th>Softest game</th></tr></thead>
+  <tbody>
+  {% for r in schedule.rows %}
+    <tr>
+      <td class="num">{{ r.sosRank }}</td>
+      <td><span class="team">{{ r.team }}</span><br><span class="owner">{{ r.record }} · power #{{ r.rank }}</span></td>
+      <td class="num">{{ r.gamesLeft }}</td>
+      <td class="num"><span class="bar" style="width:{{ r.avgOppPower * 0.8 }}px"></span>{{ r.avgOppPower | fixed }}</td>
+      <td class="num">{{ r.avgOppPpg | fixed }}</td>
+      <td>{% if r.toughest %}Wk {{ r.toughest.week }} vs {{ r.toughest.opp }}{% endif %}</td>
+      <td>{% if r.easiest %}Wk {{ r.easiest.week }} vs {{ r.easiest.opp }}{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+<p class="note">Counts Weeks {{ schedule.remainingWeeks | first }}–{{ schedule.lastRegWeek }} (regular season only). Opponent power is the same 0–100 score used on the power rankings. Teams that share the same remaining opponents tie.</p>
+
+<h2>Week by week</h2>
+<div class="cards">
+{% for r in schedule.rows %}
+  <div class="card">
+    <h3>{{ r.team }}</h3>
+    <ul>{% for g in r.games %}<li>Wk {{ g.week }}: {{ g.opp }} <span class="owner">(#{{ g.oppRank }})</span></li>{% endfor %}</ul>
+  </div>
+{% endfor %}
+</div>

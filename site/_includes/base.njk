@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · {{ site.leagueName }} Roast</title>
+  <link rel="stylesheet" href="{{ '/assets/style.css' | url }}">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="{{ '/' | url }}">🔥 {{ site.leagueName }} Roast</a>
+      <nav>
+        <a href="{{ '/' | url }}">Power</a>
+        <a href="{{ '/tiers/' | url }}">Tiers</a>
+        <a href="{{ '/schedule/' | url }}">Schedule</a>
+        <a href="{{ '/waivers/' | url }}">Waivers</a>
+        <a href="{{ '/trades/' | url }}">Trades</a>
+        <a href="{{ '/teams/' | url }}">Teams</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>{{ title }}</h1>
+    {% if subtitle %}<p class="sub">{{ subtitle }}</p>{% endif %}
+    {{ content | safe }}
+  </main>
+  <footer class="wrap foot">
+    Through Week {{ site.weeksPlayed }} · {{ site.season }} season · Built {{ site.generatedAt | dateOnly }}.
+    Purely for entertainment and trash talk. Points are straight from Sleeper.
+  </footer>
+</body>
+</html>

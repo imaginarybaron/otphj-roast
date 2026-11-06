@@ -1,0 +1,22 @@
+{
+  "name": "otphj-roast",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Roast site for the OTPHJ Sleeper fantasy football league",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "fetch": "node src/fetch.js",
+    "report": "node src/report.js",
+    "refresh": "node src/fetch.js && node src/report.js",
+    "data": "node src/build-data.js",
+    "site": "eleventy",
+    "serve": "eleventy --serve",
+    "build": "node src/fetch.js && node src/build-data.js && eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.8"
+  }
+}

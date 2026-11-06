@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Team Roasts
+subtitle: Every team gets a few lines. Nobody is safe.
+---
+{% for div in site.divisions %}
+<h2>{{ div }}</h2>
+<div class="cards">
+  {% for t in power.rankings %}{% if t.division == div %}
+  <div class="card team-card">
+    <h3><span>{{ t.team }}</span><span class="owner">#{{ t.rank }}</span></h3>
+    <div class="owner">{{ t.owner }} · {{ t.record }} · {{ t.pf | fixed }} PF</div>
+    <ul>
+      {% for l in roast.teams[t.rosterId] %}<li><span class="tag">{{ l.tag }}</span>{{ l.text }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}{% endfor %}
+</div>
+{% endfor %}

@@ -1,0 +1,43 @@
+---
+layout: base.njk
+title: Trades
+subtitle: Who got fleeced, judged by points scored after the deal.
+---
+<div class="cards">
+{% for c in roast.categories.trades %}
+  <div class="card"><h3>{{ c.title }}</h3><p>{{ c.text }}</p></div>
+{% endfor %}
+</div>
+
+{% for tr in trades.trades %}
+<h2>Week {{ tr.week }}{% if tr.date %} <span class="owner">· {{ tr.date }}</span>{% endif %}</h2>
+<div class="versus">
+  {% for s in tr.sides %}
+  <div class="card {% if tr.verdict == 'decided' and s.rosterId == tr.winnerRosterId %}win{% endif %}">
+    <h3>{{ s.team }}
+      {% if tr.verdict == 'decided' %}{% if s.rosterId == tr.winnerRosterId %}<span class="pill win">WINNER</span>{% else %}<span class="pill lose">LOSER</span>{% endif %}
+      {% elif tr.verdict == 'too-close' %}<span class="pill">PUSH</span>{% else %}<span class="pill">TOO EARLY</span>{% endif %}
+    </h3>
+    <div class="owner">{{ s.owner }}</div>
+    <p><strong>Got:</strong></p>
+    <ul>
+      {% for p in s.received %}<li>{{ p.name }} <span class="owner">{{ p.pos }}</span> – {{ p.startedPts | fixed }} started pts</li>{% endfor %}
+      {% for p in s.picksIn %}<li>🎟️ {{ p.label }}</li>{% endfor %}
+      {% if s.faabIn %}<li>${{ s.faabIn }} FAAB</li>{% endif %}
+    </ul>
+    <p><strong>Total since trade:</strong> {{ s.startedPts | fixed }} started pts</p>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+
+<h2>Traded picks</h2>
+{% if trades.tradedPicks.size or trades.tradedPicks.length %}
+<div class="tablewrap"><table>
+  <thead><tr><th>Pick</th><th>From</th><th>To</th><th class="num">Week</th></tr></thead>
+  <tbody>{% for p in trades.tradedPicks %}<tr><td>{{ p.label }}</td><td>{{ p.from }}</td><td>{{ p.to }}</td><td class="num">{{ p.week }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% else %}
+<p class="note">No draft picks have changed hands yet. Pick values aren't scored, so they're only listed here.</p>
+{% endif %}
+<p class="note">A trade is a "push" when the gap is under 5 started points. Winners are decided by points the received players scored in the new team's lineup after the deal.</p>

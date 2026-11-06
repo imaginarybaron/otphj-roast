@@ -1,0 +1,27 @@
+---
+layout: base.njk
+title: Tier List
+subtitle: Every team, sorted into a tier. No appeals.
+---
+{% for tr in tiers.tiers %}
+<section class="tier-row">
+  <div class="tier-letter tier-{{ tr.tier }}"><strong>{{ tr.tier }}</strong><span>{{ tr.label }}</span></div>
+  <div class="tier-body">
+    <div class="tier-teams">
+      {% for t in tr.teams %}
+      <div class="chip">
+        <span class="team">{{ t.team }}</span>
+        <span class="owner">{{ t.owner }} · {{ t.record }} · power {{ t.power | fixed }}
+          <span class="{% if t.movement > 0 %}up{% elif t.movement < 0 %}down{% endif %}">{% if t.movement > 0 %}▲{{ t.movement }}{% elif t.movement < 0 %}▼{{ t.movement | abs }}{% endif %}</span>
+        </span>
+      </div>
+      {% else %}
+      <div class="chip empty">Nobody</div>
+      {% endfor %}
+    </div>
+    <p class="tier-caption">{{ roast.categories.tiers[tr.tier] }}</p>
+  </div>
+</section>
+{% endfor %}
+<p class="note">Tiers come from the Power score (see Power Rankings for the formula):
+{% for c in tiers.cutoffs %}{{ c.tier }} ≥ {{ c.min }}, {% endfor %}F below that.</p>
